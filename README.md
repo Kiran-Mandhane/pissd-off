@@ -15,7 +15,8 @@ mysql> INSERT INTO student VALUES(2, ’bob’, 0.4);
 mysql> SELECT * FROM student;
 ```
 
-You should now have created a database called 'testDB' with a single table 'user', consisting of 2 rows and 3 attributes.  
+You should now have created a database called 'testDB' with a single table 'user', consisting of 2 rows and 3 attributes.      
+
 
 
 2. Be aware that this is using the root account and thus we may consider creating new users. Here is some sample command line arguments:
