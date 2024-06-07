@@ -42,8 +42,6 @@ import { StyleSheet, View, Text } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 
 const App = () => {
-
-
   const markers = [
     {
       coordinate: {
@@ -56,7 +54,6 @@ const App = () => {
     // Add more markers as needed
   ];
 
-const App = () => {
   return (
     <View style={styles.container}>
       <MapView
