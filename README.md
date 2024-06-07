@@ -1,50 +1,31 @@
-# Welcome to your Expo app 👋
+# CS-348-Course-Project
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+To create a sample database, please ensure that **MySQL** is installed before continuining with the following steps. Installing can be found at the [installation page](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
 
-## Get started
+1. Make a new 'Toy' database by following the instructions provided below:
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```mysql
+$ mysql -u root -p (or sudo mysql -u root)
+mysql> CREATE DATABASE testDB;
+mysql> USE testDB;
+mysql> CREATE TABLE student(uid DECIMAL(3, 0) NOT NULL PRIMARY KEY, name
+VARCHAR(30), score DECIMAL(3, 2));
+mysql> INSERT INTO student VALUES(1, ’alice’, 0.1);
+mysql> INSERT INTO student VALUES(2, ’bob’, 0.4);
+mysql> SELECT * FROM student;
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+You should now have created a database called 'testDB' with a single table 'user', consisting of 2 rows and 3 attributes. <br/>
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+2. Be aware that this is using the root account and thus we may consider creating new users. Here is some sample command line arguments:
 
-## Join the community
+```mysql
+mysql> create user ’sujaya’@’localhost’ identified by ’Password0!’;
+mysql> grant all on testDB.* to ’sujaya’@’localhost’;
+mysql> alter user ’sujaya’@’localhost’ identified with mysql_native_password
+by ’Password0!’;
+```
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This creates a new user with a username 'sujaya' and password 'Password0!'!
