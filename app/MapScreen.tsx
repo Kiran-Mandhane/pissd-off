@@ -1,18 +1,18 @@
-// MapScreen.tsx
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import axios from 'axios';
 
-let ipAddress = "172.20.10.3"
+let ipAddress = "172.20.10.3";
 
 const MapScreen = () => {
-  const [washrooms, setWashrooms] = useState<{ WashroomID: string, CoordinateX: string, CoordinateY: string }[]>([]);
+  const [washrooms, setWashrooms] = useState<{ washroomName: string, latitude: string, longitude: string }[]>([]);
 
   useEffect(() => {
     // Fetch data from your PHP API
-    axios.get('http://'+ ipAddress + ':8000/test.php/coordinates')
+    axios.get('http://' + ipAddress + ':8000/test.php/coordinates')
       .then(response => {
+        console.log('API response data:', response.data);
         setWashrooms(response.data);
       })
       .catch(error => {
@@ -31,23 +31,30 @@ const MapScreen = () => {
           longitudeDelta: 50,
         }}
       >
-        {washrooms.map((washroom, index) => (
-          <Marker
-            key={index}
-            coordinate={{
-              latitude: parseFloat(washroom.CoordinateX),
-              longitude: parseFloat(washroom.CoordinateY),
-            }}
-            title={`Washroom ${washroom.WashroomID}`}
-          >
-            <Callout>
-              <View>
-                <Text>{`Washroom ${washroom.WashroomID}`}</Text>
-                <Text>{`Coordinates: ${washroom.CoordinateX}, ${washroom.CoordinateY}`}</Text>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
+        {washrooms.map((washroom, index) => {
+          const latitude = parseFloat(washroom.latitude);
+          const longitude = parseFloat(washroom.longitude);
+
+          if (isNaN(latitude) || isNaN(longitude)) {
+            console.warn(`Invalid coordinates for washroom ${washroom.washroomName}: ${washroom.latitude}, ${washroom.longitude}`);
+            return null;
+          }
+
+          return (
+            <Marker
+              key={index}
+              coordinate={{ latitude, longitude }}
+              title={`Washroom ${washroom.washroomName}`}
+            >
+              <Callout>
+                <View>
+                  <Text>{`Washroom ${washroom.washroomName}`}</Text>
+                  <Text>{`Coordinates: ${washroom.latitude}, ${washroom.longitude}`}</Text>
+                </View>
+              </Callout>
+            </Marker>
+          );
+        })}
       </MapView>
     </View>
   );
