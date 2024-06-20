@@ -1,17 +1,17 @@
 CREATE TABLE Washrooms (
- washroomId INT NOT NULL PRIMARY KEY,
-washroomName VARCHAR(100),
-category VARCHAR(100),
-street VARCHAR(100),
-hoursOfOperation VARCHAR(100),
-onCall BOOL,
-latitude VARCHAR(100),
-longitude VARCHAR(100)
+ 	washroomId INT NOT NULL PRIMARY KEY,
+	washroomName VARCHAR(100),
+	category VARCHAR(100),
+	street VARCHAR(100),
+	hoursOfOperation VARCHAR(100),
+	onCall BOOL,
+	latitude VARCHAR(100),
+	longitude VARCHAR(100)
 );
 
 CREATE TABLE Reviews (
 	reviewId INT NOT NULL PRIMARY KEY,
-	reviewTimestamp DATE NOT NULL,
+	reviewTimestamp DATETIME NOT NULL,
 	text VARCHAR(30)
 );
 
@@ -21,11 +21,11 @@ CREATE TABLE isReviewOf(
 	PRIMARY KEY(washroomId, reviewId) 
 );
 
-CREATE TABLE isUserForms (
+CREATE TABLE Forms (
 	formId INT NOT NULL PRIMARY KEY,
-	reviewTimestamp DATE NOT NULL,
+	formTimestamp DATETIME NOT NULL,
 	gender VARCHAR(6) NOT NULL,
-waitTime FLOAT,
+	waitTime DECIMAL(3,2),
 	cleanliness INT
 );
 
