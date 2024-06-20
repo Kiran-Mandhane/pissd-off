@@ -8,7 +8,7 @@ interface MapScreenProps {
 }
 
 const MapScreen: React.FC<MapScreenProps> = ({ timerSeconds }) => {
-  const [washrooms, setWashrooms] = useState<{ WashroomID: string, CoordinateX: string, CoordinateY: string }[]>([]);
+  const [washrooms, setWashrooms] = useState<{ washroomName: string, latitude: string, longitude: string }[]>([]);
 
   useEffect(() => {
     // Fetch data from your PHP API
