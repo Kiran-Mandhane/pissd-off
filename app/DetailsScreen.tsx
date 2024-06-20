@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
 import * as Font from 'expo-font';
+import axios from 'axios';
 
 interface DetailsScreenProps {
   timerRunning: boolean;
@@ -29,6 +30,28 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({ timerRunning, timerSecond
 
     loadFonts();
   }, []);
+
+
+  useEffect(() => {
+    if (bathroomRating !== null) {
+      const sendRatingData = async () => {
+        try {
+          const response = await axios.post('http://172.20.10.3:8000/test.php/ratings', {
+            reviewTimestamp: new Date(),
+            gender: selectedGender,
+            cleanliness: bathroomRating,
+            waitTime: timerSeconds,
+          });
+          console.log('Rating data sent successfully:', response.data);
+        } catch (error) {
+          console.error('Error sending rating data:', error);
+        }
+      };
+ 
+ 
+      sendRatingData();
+    }
+  }, [bathroomRating]);
 
   const handleGenderSelect = (gender: string) => {
     setSelectedGender(gender);

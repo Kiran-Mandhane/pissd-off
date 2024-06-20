@@ -12,7 +12,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ timerSeconds }) => {
 
   useEffect(() => {
     // Fetch data from your PHP API
-    axios.get('http://172.20.10.2:8000/test.php/coordinates')
+    axios.get('http://172.20.10.3:8000/test.php/coordinates')
       .then(response => {
         console.log('API response data:', response.data);
         setWashrooms(response.data);
