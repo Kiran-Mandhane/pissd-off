@@ -62,23 +62,51 @@
 // export default App;
 
 
-
 import React, { useState } from 'react';
-import { SafeAreaView, View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet } from 'react-native';
 import MapScreen from './MapScreen';
 import DetailsScreen from './DetailsScreen';
 
 const App = () => {
-  const [currentScreen, setCurrentScreen] = useState<'Map' | 'Details'>('Map');
+  const [currentScreen, setCurrentScreen] = useState<'Map' | 'Details'>('Details');
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null);
+
+  const handleTapIn = () => {
+    if (!timerRunning) {
+      setTimerRunning(true);
+      let seconds = 0;
+      const interval = setInterval(() => {
+        seconds++;
+        setTimerSeconds(seconds);
+      }, 1000);
+      setTimerInterval(interval);
+    }
+  };
+
+  const handleTapOut = () => {
+    if (timerRunning && timerInterval) {
+      clearInterval(timerInterval);
+      setTimerRunning(false);
+      setTimerSeconds(0); // Reset timer seconds
+    }
+  };
 
   const renderScreen = () => {
     switch (currentScreen) {
       case 'Map':
-        return <MapScreen />;
+        return <MapScreen timerSeconds={timerSeconds} />;
       case 'Details':
-        return <DetailsScreen />;
       default:
-        return null;
+        return (
+          <DetailsScreen
+            timerRunning={timerRunning}
+            timerSeconds={timerSeconds}
+            handleTapIn={handleTapIn}
+            handleTapOut={handleTapOut}
+          />
+        );
     }
   };
 

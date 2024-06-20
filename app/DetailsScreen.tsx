@@ -1,43 +1,22 @@
-// // DetailsScreen.tsx
-// import React from 'react';
-// import { View, Text, StyleSheet } from 'react-native';
-
-// const DetailsScreen = () => {
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.text}>Details Screen</Text>
-//       <Text style={styles.text}>Add your detailed content here.</Text>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   text: {
-//     fontSize: 20,
-//     marginBottom: 10,
-//   },
-// });
-
-// export default DetailsScreen;
-
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
 import * as Font from 'expo-font';
 
-const DetailsScreen = () => {
+interface DetailsScreenProps {
+  timerRunning: boolean;
+  timerSeconds: number;
+  handleTapIn: () => void;
+  handleTapOut: () => void;
+}
+
+const DetailsScreen: React.FC<DetailsScreenProps> = ({ timerRunning, timerSeconds, handleTapIn, handleTapOut }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [showTapInButton, setShowTapInButton] = useState(false);
-  const [timerRunning, setTimerRunning] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(0);
-  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null);
   const [waitTimeOver, setWaitTimeOver] = useState(false);
+  const [isRatingPopupVisible, setRatingPopupVisible] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [bathroomRating, setBathroomRating] = useState<number | null>(null);
 
   useEffect(() => {
     async function loadFonts() {
@@ -57,33 +36,30 @@ const DetailsScreen = () => {
     setWaitTimeOver(false);
   };
 
-  const handleTapIn = () => {
-    if (!timerRunning) {
-      setTimerRunning(true);
-      let seconds = 0;
-      const interval = setInterval(() => {
-        seconds++;
-        setTimerSeconds(seconds);
-      }, 1000);
-      setTimerInterval(interval);
-    }
+  const handleTapInPress = () => {
+    handleTapIn(); // Start the timer
   };
 
-  const handleTapOut = () => {
-    if (timerRunning && timerInterval) {
-      clearInterval(timerInterval);
-      setTimerRunning(false);
-      setWaitTimeOver(true);
-    }
+  const handleTapOutPress = () => {
+    handleTapOut(); // Stop the timer
+    setRatingPopupVisible(true); // Show rating pop-up
+  };
+
+  const handleRatingSelect = (rating: number) => {
+    setBathroomRating(rating);
+    setShowFeedback(true);
+    setRatingPopupVisible(false); // Hide rating pop-up
+  };
+
+  const handleCloseRatingPopup = () => {
+    setRatingPopupVisible(false); // Hide rating pop-up
   };
 
   useEffect(() => {
     return () => {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-      }
+      // Clean up any timers or effects if needed
     };
-  }, [timerInterval]);
+  }, []);
 
   if (!fontsLoaded) {
     return <ActivityIndicator size="large" />;
@@ -91,56 +67,85 @@ const DetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      {!waitTimeOver ? (
-        <>
-          {selectedGender ? null : (
-            <>
-              <Text style={styles.text}>Details Screen</Text>
-              <Text style={styles.text}>Add your detailed content here.</Text>
+      {!isRatingPopupVisible ? (
+        !waitTimeOver ? (
+          <>
+            {selectedGender ? null : (
+              <>
+                <Text style={styles.text}>Details Screen</Text>
+                <Text style={styles.text}>Add your detailed content here.</Text>
 
-              {/* Gender Buttons */}
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={[styles.button, selectedGender === 'female' && styles.selectedButton]}
-                  onPress={() => handleGenderSelect('female')}>
-                  <Text style={styles.buttonText}>Female</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, selectedGender === 'male' && styles.selectedButton]}
-                  onPress={() => handleGenderSelect('male')}>
-                  <Text style={styles.buttonText}>Male</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, selectedGender === 'other' && styles.selectedButton]}
-                  onPress={() => handleGenderSelect('other')}>
-                  <Text style={styles.buttonText}>Other</Text>
+                {/* Gender Buttons */}
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={[styles.button, selectedGender === 'female' && styles.selectedButton]}
+                    onPress={() => handleGenderSelect('female')}>
+                    <Text style={styles.buttonText}>Female</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, selectedGender === 'male' && styles.selectedButton]}
+                    onPress={() => handleGenderSelect('male')}>
+                    <Text style={styles.buttonText}>Male</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, selectedGender === 'other' && styles.selectedButton]}
+                    onPress={() => handleGenderSelect('other')}>
+                    <Text style={styles.buttonText}>Other</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+
+            {/* Tap In Button */}
+            {showTapInButton && !timerRunning && !showFeedback && (
+              <TouchableOpacity style={styles.tapInButton} onPress={handleTapInPress}>
+                <Text style={styles.buttonText}>Tap In</Text>
+              </TouchableOpacity>
+            )}
+
+            {/* Timer Display and Tap Out Button */}
+            {timerRunning && (
+              <View style={styles.timerContainer}>
+                <Text style={styles.timerText}>Timer: {timerSeconds} seconds</Text>
+                <TouchableOpacity style={styles.tapOutButton} onPress={handleTapOutPress}>
+                  <Text style={styles.buttonText}>Tap Out</Text>
                 </TouchableOpacity>
               </View>
-            </>
-          )}
+            )}
 
-          {/* Tap In Button */}
-          {showTapInButton && !timerRunning && (
-            <TouchableOpacity style={styles.tapInButton} onPress={handleTapIn}>
-              <Text style={styles.buttonText}>Tap In</Text>
-            </TouchableOpacity>
-          )}
+            {/* Feedback Display */}
+            {showFeedback && (
+              <View style={styles.feedbackContainer}>
+                <Text style={styles.feedbackText}>Thanks for your feedback. You rated this bathroom a: {bathroomRating}</Text>
+              </View>
+            )}
+          </>
+        ) : (
+          <View style={styles.waitTimeOverContainer}>
+            <Text style={styles.waitTimeOverText}>Wait Time Over</Text>
+          </View>
+        )
+      ) : null}
 
-          {/* Timer Display and Tap Out Button */}
-          {timerRunning && (
-            <View style={styles.timerContainer}>
-              <Text style={styles.timerText}>Timer: {timerSeconds} seconds</Text>
-              <TouchableOpacity style={styles.tapOutButton} onPress={handleTapOut}>
-                <Text style={styles.buttonText}>Tap Out</Text>
+      {/* Rating Pop-up */}
+      <Modal visible={isRatingPopupVisible} transparent={true} animationType="slide">
+        <View style={styles.ratingPopupContainer}>
+          <TouchableOpacity style={styles.closeButton} onPress={handleCloseRatingPopup}>
+            <Text style={styles.closeButtonText}>x</Text>
+          </TouchableOpacity>
+          <Text style={styles.ratingTitle}>Rate the bathroom:</Text>
+          <View style={styles.ratingButtonsContainer}>
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <TouchableOpacity
+                key={rating}
+                style={styles.ratingButton}
+                onPress={() => handleRatingSelect(rating)}>
+                <Text style={styles.ratingButtonText}>{rating}</Text>
               </TouchableOpacity>
-            </View>
-          )}
-        </>
-      ) : (
-        <View style={styles.waitTimeOverContainer}>
-          <Text style={styles.waitTimeOverText}>Wait Time Over</Text>
+            ))}
+          </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
 };
@@ -206,6 +211,53 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'Lato-Bold', // Use the loaded font
     color: '#000000',
+  },
+  feedbackContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  feedbackText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
+    textAlign: 'center',
+  },
+  ratingPopupContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    backgroundColor: '#ccc',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeButtonText: {
+    fontSize: 16,
+    color: '#fff',
+  },
+  ratingTitle: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  ratingButtonsContainer: {
+    flexDirection: 'row',
+  },
+  ratingButton: {
+    backgroundColor: '#e5c3ff',
+    padding: 10,
+    margin: 5,
+    borderRadius: 5,
+  },
+  ratingButtonText: {
+    fontSize: 16,
   },
 });
 

@@ -1,17 +1,18 @@
-// MapScreen.tsx
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import axios from 'axios';
 
-let ipAddress = "172.20.10.3"
+interface MapScreenProps {
+  timerSeconds: number;
+}
 
-const MapScreen = () => {
+const MapScreen: React.FC<MapScreenProps> = ({ timerSeconds }) => {
   const [washrooms, setWashrooms] = useState<{ WashroomID: string, CoordinateX: string, CoordinateY: string }[]>([]);
 
   useEffect(() => {
     // Fetch data from your PHP API
-    axios.get('http://'+ ipAddress + ':8000/test.php/coordinates')
+    axios.get('http://172.20.10.2:8000/test.php/coordinates')
       .then(response => {
         setWashrooms(response.data);
       })
@@ -23,7 +24,7 @@ const MapScreen = () => {
   return (
     <View style={styles.container}>
       <MapView
-        style={{ flex: 1 }}
+        style={styles.map}
         initialRegion={{
           latitude: 0, // Update this with your initial latitude if needed
           longitude: 0, // Update this with your initial longitude if needed
@@ -49,6 +50,11 @@ const MapScreen = () => {
           </Marker>
         ))}
       </MapView>
+
+      {/* Display Timer */}
+      <View style={styles.timerContainer}>
+        <Text style={styles.timerText}>Timer: {timerSeconds} seconds</Text>
+      </View>
     </View>
   );
 };
@@ -56,6 +62,20 @@ const MapScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  map: {
+    flex: 1,
+  },
+  timerContainer: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
+    padding: 10,
+    borderRadius: 10,
+  },
+  timerText: {
+    fontSize: 16,
   },
 });
 
