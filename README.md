@@ -21,12 +21,12 @@ mysql> source /sql-files/PopulateWashroomData.sql
 
 ## Running application
 
-1. Run `yarn install`
-2. Run `yarn add expo` if no .expo folder is added
+1. Install yarn 
+2. Run `yarn install`
     - additional dependencies may need to be added
-3. Run `yarn start` 
+2. Run `yarn start` 
     - note it will not work when connected to the school wifi
-4. scan the QR code with the `Expo Go` app on your phone
+4. Scan the QR code with the `Expo Go` app on your phone
 
 ## Currently supported features 
 
