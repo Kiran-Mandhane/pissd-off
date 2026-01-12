@@ -1,5 +1,3 @@
-# CS-348-Course-Project
-
 This project is a React Native application designed to help users find and rate public bathrooms. It includes a map interface, a form for submitting ratings, and a review section.
 
 ## Prerequisites
